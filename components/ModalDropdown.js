@@ -93,6 +93,7 @@ export default class ModalDropdown extends Component {
   componentDidUpate(prevProps, prevState){
     let {buttonText, selectedIndex} = this.state;
     const {defaultIndex, defaultValue, options} = this.props;
+    console.log("waht is the options in the update", options);
     buttonText = this._nextValue == null ? buttonText : this._nextValue;
     selectedIndex = this._nextIndex == null ? selectedIndex : this._nextIndex;
     if (selectedIndex < 0) {
@@ -152,7 +153,7 @@ export default class ModalDropdown extends Component {
     _renderDropdown = () => {
       const {scrollEnabled, renderSeparator, showsVerticalScrollIndicator, keyboardShouldPersistTaps} = this.props;
       return (
-        <FlatList 
+        <FlatList
             scrollEnabled={scrollEnabled}
             style={styles.list}
             keyExtractor={(_, index) => index.toString()}
@@ -184,7 +185,7 @@ export default class ModalDropdown extends Component {
       const preservedProps = {
         key,
         accessible,
-        onPress: () => this._onRowPress(rowData, rowID),
+        onPress: () => {this._onRowPress(rowData)},
       };
       if (TOUCHABLE_ELEMENTS.find(name => name == row.type.displayName)) {
         const props = {...row.props};
@@ -241,6 +242,7 @@ export default class ModalDropdown extends Component {
   }
 
   show() {
+    console.log("i SHOULD SHOW");
     this._updatePosition(() => {
       this.setState({
         showDropdown: true
@@ -286,16 +288,17 @@ export default class ModalDropdown extends Component {
                         onPress={this._onButtonPress}
       >
         {
-          children ||
-          (
-            <View style={styles.button}>
-              <Text style={[styles.buttonText, textStyle]}
-                    numberOfLines={1}
-              >
-                {buttonText}
-              </Text>
-            </View>
-          )
+          children
+          // ||
+          // (
+          //   <View style={styles.button}>
+          //     <Text style={[styles.buttonText, textStyle]}
+          //           numberOfLines={1}
+          //     >
+          //       {buttonText}
+          //     </Text>
+          //   </View>
+          // )
         }
       </TouchableOpacity>
     );
@@ -367,7 +370,7 @@ export default class ModalDropdown extends Component {
 
   _onRowPress(rowData, rowID) {
     const {onSelect, renderButtonText, onDropdownWillHide} = this.props;
-    if (!onSelect || onSelect(rowID, rowData) !== false) {
+    if (!onSelect || onSelect(rowData) !== false) {
       // highlightRow();
       const value = renderButtonText && renderButtonText(rowData) || rowData.toString();
       this._nextValue = value;
